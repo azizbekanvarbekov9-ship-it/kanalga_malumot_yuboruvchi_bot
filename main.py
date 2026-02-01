@@ -12,10 +12,10 @@ async def main():
     bot = Bot(BOT_TOKEN)
     dp = Dispatcher(storage=MemoryStorage())
 
-    # Start handler
+
     dp.message.register(functions.start_handler, CommandStart())
 
-    # FSM handlers
+
     dp.message.register(functions.phone_handler, functions.UserForm.phone)
     dp.message.register(functions.fullname_handler, functions.UserForm.fullname)
     dp.message.register(functions.age_handler, functions.UserForm.age)

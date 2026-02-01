@@ -3,7 +3,9 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
+
 CHANNEL_ID =-1003130885017
+
 
 class UserForm(StatesGroup):
     phone = State()
@@ -12,21 +14,21 @@ class UserForm(StatesGroup):
     region = State()
     district = State()
 
+
 async def start_handler(message: Message, state: FSMContext):
     await state.clear()
     await message.answer("📞 Telefon raqamingizni kiriting:")
     await state.set_state(UserForm.phone)
 
 
-# ================= PHONE =================
 async def phone_handler(message: Message, state: FSMContext):
     phone = message.text.strip()
 
-    # + belgisini olib tashlash
+
     if phone.startswith("+"):
         phone = phone[1:]
 
-    # faqat raqamlar
+
     for ch in phone:
         if ch not in "0123456789":
             await message.answer(
@@ -34,7 +36,7 @@ async def phone_handler(message: Message, state: FSMContext):
             )
             return
 
-    # uzunlik va format tekshirish
+
     if len(phone) == 12 and phone.startswith("998"):
         normalized = phone
     elif len(phone) == 9:
@@ -45,21 +47,21 @@ async def phone_handler(message: Message, state: FSMContext):
         )
         return
 
-    # operator kodi tekshirish
+
     operator = normalized[3:5]
     allowed_operators = ["90", "91", "93", "94", "95", "97", "99", "88"]
     if operator not in allowed_operators:
         await message.answer("❌ Operator kodi notogri!")
         return
 
-    # kanalga yuborish formati: +998XXXXXXXXX
+
     normalized_for_channel = "+" + normalized
     await state.update_data(phone=normalized_for_channel)
     await message.answer("👤 Ism va familiyangizni kiriting:")
     await state.set_state(UserForm.fullname)
 
 
-# ================= FULLNAME =================
+
 async def fullname_handler(message: Message, state: FSMContext):
     name = message.text.strip()
     if len(name) == 0 or len(name) > 20:
@@ -71,7 +73,7 @@ async def fullname_handler(message: Message, state: FSMContext):
     await state.set_state(UserForm.age)
 
 
-# ================= AGE =================
+
 async def age_handler(message: Message, state: FSMContext):
     age_text = message.text.strip()
     for ch in age_text:
@@ -89,7 +91,7 @@ async def age_handler(message: Message, state: FSMContext):
     await state.set_state(UserForm.region)
 
 
-# ================= REGION =================
+
 async def region_handler(message: Message, state: FSMContext):
     region = message.text.strip()
     if len(region) == 0 or len(region) > 20:
